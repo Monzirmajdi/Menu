@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant Menu</title>
+    <title>Full Screen Menu Display</title>
     <style>
         * {
             margin: 0;
@@ -13,120 +13,125 @@
         }
         
         body {
-            background-color: #f5f5f5;
+            overflow: hidden;
+            background-color: #111;
         }
         
         .header {
             background-color: #0084ff;
             color: white;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
-            font-size: 24px;
-            position: sticky;
+            position: fixed;
             top: 0;
+            width: 100%;
             z-index: 100;
         }
         
         .menu-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
+            position: fixed;
+            top: 60px;
+            bottom: 0;
+            width: 100%;
+            overflow-y: auto;
         }
         
         .menu-item {
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            cursor: pointer;
-            height: 300px;
-        }
-        
-        .menu-item:hover {
-            transform: translateY(-5px);
+            width: 100%;
+            margin-bottom: 5px;
         }
         
         .menu-item img {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
             display: block;
         }
         
-        /* Fullscreen mode */
-        .fullscreen-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        
-        .fullscreen-image {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-        }
-        
         .close-btn {
-            position: absolute;
+            position: fixed;
             top: 20px;
             right: 20px;
             color: white;
-            font-size: 30px;
+            background-color: rgba(0,0,0,0.5);
+            border: none;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             cursor: pointer;
+            z-index: 101;
+            display: none;
         }
         
-        @media (max-width: 768px) {
+        /* For larger screens */
+        @media (min-width: 768px) {
             .menu-container {
-                grid-template-columns: 1fr;
+                display: flex;
+                flex-wrap: wrap;
+            }
+            
+            .menu-item {
+                width: 50%;
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .menu-item {
+                width: 33.33%;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">Restaurant Menu</div>
+    <button class="close-btn" id="closeBtn">×</button>
     
-    <div class="menu-container">
-        <div class="menu-item">
-            <img src="menu1.jpg" alt="Menu Page 1" onclick="showFullscreen('menu1.jpg')">
-        </div>
-        <div class="menu-item">
-            <img src="menu2.jpg" alt="Menu Page 2" onclick="showFullscreen('menu2.jpg')">
-        </div>
-        <!-- Add more menu items as needed -->
-    </div>
-
-    <!-- Fullscreen overlay -->
-    <div class="fullscreen-overlay" id="fullscreenOverlay" onclick="hideFullscreen()">
-        <span class="close-btn">&times;</span>
-        <img class="fullscreen-image" id="fullscreenImage" src="" alt="Fullscreen Menu">
+    <div class="menu-container" id="menuContainer">
+        <!-- Menu items will be added here dynamically -->
     </div>
 
     <script>
-        function showFullscreen(imageSrc) {
-            const overlay = document.getElementById('fullscreenOverlay');
-            const fullscreenImg = document.getElementById('fullscreenImage');
-            
-            fullscreenImg.src = imageSrc;
-            overlay.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
+        // Sample menu images (replace with your actual image paths)
+        const menuImages = [
+            'menu1.jpg',
+            'menu2.jpg',
+            'menu3.jpg',
+            'menu4.jpg'
+            // Add more images as needed
+        ];
         
-        function hideFullscreen() {
-            const overlay = document.getElementById('fullscreenOverlay');
-            overlay.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
+        const menuContainer = document.getElementById('menuContainer');
+        const closeBtn = document.getElementById('closeBtn');
+        
+        // Load menu images
+        menuImages.forEach((imageSrc, index) => {
+            const menuItem = document.createElement('div');
+            menuItem.className = 'menu-item';
+            
+            const img = document.createElement('img');
+            img.src = imageSrc;
+            img.alt = `Menu page ${index + 1}`;
+            img.loading = "lazy";
+            
+            menuItem.appendChild(img);
+            menuContainer.appendChild(menuItem);
+        });
+        
+        // Close button functionality
+        let isFullscreen = false;
+        
+        closeBtn.addEventListener('click', () => {
+            if (isFullscreen) {
+                document.body.style.overflow = 'hidden';
+                closeBtn.style.display = 'none';
+                isFullscreen = false;
+            }
+        });
+        
+        // Show close button when scrolling (indicating user interaction)
+        window.addEventListener('scroll', () => {
+            closeBtn.style.display = 'block';
+            isFullscreen = true;
+        });
     </script>
 </body>
 </html>
